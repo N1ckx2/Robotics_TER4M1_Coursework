@@ -66,7 +66,7 @@ int search (int array[], int size, int toFind) {
 	return index;
 }
 
-int* addItem (int array[], int &size, int val, int pos){
+int* addItem (int* array, int &size, int val, int pos){
 	//inserts value at position and returns array
 	int *temp = new int[++size]; //declare temp
 	
@@ -103,12 +103,25 @@ int* input (int *array, int &size) {
 	return array;
 }
 
+int getInt(int low, int high = INT_MAX) { 
+//Forces user to enter a value between the high and low integer then returns that value
+	int val = 0; // declare variables
+	cin >> val; //user input
+	
+	//loop until val is in the range
+	while (val > high || val < low) {
+		cout << "Enter a value between " << low << " and " << high << ": ";
+		cin >> val;
+	}
+	return val;
+}
+
 int main () { //main method
-	char choice = 't';
+	char choice = -1;
 	int* array;
 	int size = 0;
 
-    while (choice != '0') //exit when 0
+    while (choice != 0) //exit when 0
     {
         system("cls"); // clears screen
         
@@ -138,50 +151,54 @@ int main () { //main method
         cout << "0. Quit\n\n";
         cout << "Choice: ";
         //gets user input
-        cin >> choice;
+        choice = getInt(0, 8);
           
         system("cls"); // clears screen
         
         //calls appropriate method based on number user chooses
-        if (choice == '1') {
+        if (choice == 1) {
         	cout << "Desired array size: "; //prompt user for input
-        	cin >> size; //receive size
+        	size = getInt(0); //receive size
         	array = fill(size);
-		} else if (choice == '2')
+		} else if (choice == 2)
 			array = input(array, size);
-		else if (choice == '3')
+		else if (choice == 3)
 			cout << "The average of the array is " << avg(array, size) << endl;
-		else if (choice == '4')
+		else if (choice == 4)
 			cout << "The minimum of the array is " << min(array, size) << endl;
-		else if (choice == '5')
+		else if (choice == 5)
 			cout << "The maximum of the array is " << max(array, size) << endl;
-		else if (choice == '6'){
+		else if (choice == 6){
 			int toFind, pos; //declare variable
 			cout << "Value to be found: "; //prompt user
 			cin >> toFind; //input value
 			pos = search(array, size, toFind);
 			(pos == -1 ? cout <<  "Value not in array." : cout << "Value is at position " << pos);
 		}
-		else if (choice == '7') {
+		else if (choice == 7) {
 			int item, pos; //declare variables
 			
 			//user input
 			cout << "Item to be added: ";
 			cin >> item;
 			cout << "Position where it is to be added: ";
-			cin >> pos;
+			pos = getInt(0, size);
 			
-			*array = *addItem(array, size, item, pos); //add item
-		} else if (choice == '8') {
+			array = addItem(array, size, item, pos); //add item
+		} else if (choice == 8) {
 			int pos; //declare variables
-			cout << "Position of item to be removed: ";
-			cin >> pos;
-			*array = *removeItem(array, size, pos);
+			if (size > 0){
+				cout << "Position of item to be removed: ";
+				pos = getInt(0, size-1);
+				array = removeItem(array, size, pos);
+			} else {
+				cout << "Cannot remove items from an empty array";
+			}
 		}
 			
 		//prompt user to continue  
-		if (choice != '0'){
-        	cout << endl << "Press any key to continue...";
+		if (choice != 0){
+        	cout << endl << endl << "Press any key to continue...";
         	getch();
     	}
     }
