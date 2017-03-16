@@ -173,7 +173,7 @@ int main () { //main method
 			cout << "Value to be found: "; //prompt user
 			cin >> toFind; //input value
 			pos = search(array, size, toFind);
-			(pos == -1 ? cout <<  "Value not in array." : cout << "Value is at position " << pos);
+			cout << (pos == -1 ? "Value not in array. Position returned by function: " : "Value is at position ") << pos;
 		}
 		else if (choice == 7) {
 			int item, pos; //declare variables
