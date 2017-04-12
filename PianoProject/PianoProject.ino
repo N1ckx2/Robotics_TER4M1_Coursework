@@ -9,7 +9,7 @@
 
 //Pins used on Arduino
 int keyPins[] = {2, 3, 4, 5, 6, 7, 8, 9}; //piano key pins
-int recordPin = 11, playPin = 12, speakerPin = 13; //pins
+int recordPin = 13, playPin = 12, speakerPin = 11; //pins
 int numPins = 8; //number of pins to make array iteration easier
 
 //Notes/Tones constants
@@ -28,6 +28,9 @@ long startTime = 0; //subtracted from the all the recorded times to prevent over
 long recordedTones[100], recordedTimes[100]; //stores the tones and notes
 int noteCounter = 0; //counts the number of notes played
 
+//Serial Output
+bool serialOn = true;
+
 void playTone(int tone, int duration) { //plays a tone
   for (long i = 0; i < duration * 1000L; i += tone * 2) {
     digitalWrite(speakerPin, HIGH);
@@ -37,6 +40,9 @@ void playTone(int tone, int duration) { //plays a tone
   }
 }
 
+void disp(String msg) {
+  if (serialOn) Serial.println(msg);
+}
 /* Unused; tones are always played. 
 void playNote(char note, int duration) { //plays notes
   char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
@@ -59,15 +65,19 @@ int getButton() { //gets which button was pressed, returns -1 if none were press
   else return -1;
 }*/ 
 
-int readBtn(int pin) { //reads button with debounce
+/*int readBtn(int pin) { //reads button with debounce
   int val = digitalRead(pin); //reads input from pin
 
   if(val != prevStates[pin]) lastDebounceTime[pin] = millis(); //stores the last time the button was pressed.
 
   if ((millis() - lastDebounceTime[pin]) > debounceDelay) //if the button was held long enough, return high
-    return HIGH;
-  else
-    return LOW;
+    prevStates[pin] = val;
+
+  return prevStates[pin];
+} */
+
+int readBtn(int pin) { //reads button with debounce
+  return digitalRead(pin); //reads input from pin
 }
 
 void setup() {
@@ -77,23 +87,30 @@ void setup() {
   pinMode(recordPin, INPUT);
   pinMode(playPin, INPUT);
   pinMode(speakerPin, OUTPUT);
+
+  if (serialOn) Serial.begin(9600);
 }
 
 void loop() {
   //Initialize recording sequence
   if(readBtn(recordPin) == HIGH){
     recording = !recording; //turn off if on, on if off
-
+    disp("Record button pressed");
+    
     if (recording) { //if it just started recording, reset variables
       startTime = millis();
       noteCounter = 0; 
+      disp("Started recording");
     }
-    else //finish recording
+    else { //finish recording
       recordedTimes[noteCounter] = millis(); //add final time get duration of pause at the end
+      disp("Finished recording");
+    }
   }
 
   //Do playing sequence
   else if(readBtn(playPin) == HIGH){
+    disp("Play button pressed. Started Playing.");
     for (int i = 0 ; i < noteCounter ; i++){ //go through all the notes
       if (recordedTones[i] != 0) { //play the note or pause
         playTone(recordedTones[i], recordedTimes[i+1]-recordedTimes[i]);
@@ -101,17 +118,20 @@ void loop() {
         delay(recordedTimes[i+1]-recordedTimes[i]);
       }
     }
+    disp("Finished Playing");
   }
 
   //Otherwise play normal note
   else {
-    boolean keyPressed = false; //if a key wasn't pressed, need to record pause
+    bool keyPressed = false; //if a key wasn't pressed, need to record pause
     for (int i = 0 ; i < numPins ; i++) {
       if (readBtn(keyPins[i]) == HIGH) { //if the current pin button is being pressed
+        disp("Key Pressed");
         keyPressed = true; 
         if (recording){ //vector add note and add time to the vector
           recordedTones[noteCounter] = tones[i];
           recordedTimes[noteCounter++] = (millis()-startTime);
+          disp("Recorded Note");
         }
         while (readBtn(keyPins[i]) == HIGH) { //play note while the button is held down
           playTone(tones[i], 15);
@@ -122,7 +142,9 @@ void loop() {
     if (!keyPressed && recording){ //records pauses
       recordedTones[noteCounter] = 0; //adds pause
       recordedTimes[noteCounter++] = (millis()-startTime);
+      disp("Recorded Pause");
     }
     
+    //if (digitalRead(keyPins[0]) == HIGH) disp("Test");
   }
 }
