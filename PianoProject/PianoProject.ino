@@ -13,7 +13,7 @@ int recordPin = 11, playPin = 12, speakerPin = 13; //pins
 int numPins = 8; //number of pins to make array iteration easier
 
 //Notes/Tones constants
-char notes[] = "cdefgabC "; //notes available on the piano
+//char notes[] = "cdefgabC "; //notes available on the piano
 int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 }; //frequencies that correspond with the notes
 
 //Debounce Variables
@@ -114,7 +114,7 @@ void loop() {
           recordedTimes[noteCounter++] = (millis()-startTime);
         }
         while (readBtn(keyPins[i]) == HIGH) { //play note while the button is held down
-          playNote(notes[i], 15);
+          playTone(tones[i], 15);
         }
       }
     }
