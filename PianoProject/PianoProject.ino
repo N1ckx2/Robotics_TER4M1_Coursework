@@ -43,6 +43,7 @@ void playTone(int tone, int duration) { //plays a tone
 void disp(String msg) {
   if (serialOn) Serial.println(msg);
 }
+
 /* Unused; tones are always played. 
 void playNote(char note, int duration) { //plays notes
   char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
