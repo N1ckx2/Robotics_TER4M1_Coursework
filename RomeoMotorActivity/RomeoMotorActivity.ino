@@ -84,10 +84,12 @@ void turn (int dist) {
 }
 
 void loop(void) {
+  advance(255, 255);
+  delay(1000);
   square(10);
   circle(10);
   turn (10);
-  wave(10);
+  wave(10,10);
   stop();
   delay(3000);
 }
