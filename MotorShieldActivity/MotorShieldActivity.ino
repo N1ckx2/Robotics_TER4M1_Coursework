@@ -22,12 +22,12 @@ void moveMotor(int speed1, int speed2, int duration) {
   m2.run(speed2 > 0 ? FORWARD : BACKWARD);
 
   //absolute values speed
-  speed1 *= (speed1 > 0 ? 1 : -1);
-  speed2 *= (speed1 > 0 ? 1 : -1);
+  speed1 *= (speed1 >= 0 ? 1 : -1);
+  speed2 *= (speed2 >= 0 ? 1 : -1);
 
   //moves the motor
   m1.setSpeed(speed1);
-  m2.setSpeed(speed2 == 0 ? 0 : speed2-diff);
+  m2.setSpeed(speed2 <= 20 ? 0 : speed2-diff);
 
   delay(duration);
 
@@ -54,14 +54,16 @@ void circle (int r) { //trace a circle
 }
 
 void wave (int r, int dist) { //creates an oscillating wave with a striaght line disatnce of dist
-  moveMotor(200, 100, r*100);
-  moveMotor(100, 200, r*100);
+  for (int i = 0 ; i < r ; i++) {
+    moveMotor(250, 20*r, r*250);
+    moveMotor(20*r, 250, r*250);
+  }
 }
 
 void turn (int dist) {
   moveMotor(150, 150, dist*200);
-  moveMotor(200, 130, 1000);
-  moveMotor(0, -200, 1000);
+  moveMotor(200, 120, 1000);
+  moveMotor(-120, -200, 1000);
   moveMotor(200, 120, 1000);
   moveMotor(150, 150, dist*200);
 }
@@ -71,6 +73,7 @@ void loop() {
   m2.run(FORWARD);
   delay(1000);
   turn(10);
+  wave(10);
   /*
   delay(1000);
   square(10);
