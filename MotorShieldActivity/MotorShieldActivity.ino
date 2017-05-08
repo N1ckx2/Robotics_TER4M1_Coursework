@@ -27,7 +27,7 @@ void moveMotor(int speed1, int speed2, int duration) {
 
   //moves the motor
   m1.setSpeed(speed1);
-  m2.setSpeed(speed2 <= 20 ? 0 : speed2*diff);
+  m2.setSpeed(speed2*diff);
 
   delay(duration);
 
@@ -54,7 +54,7 @@ void circle (int r) { //trace a circle
 }
 
 void wave (int r, int dist) { //creates an oscillating wave with a striaght line disatnce of dist
-  for (int i = 0 ; i < r ; i++) {
+  for (int i = 0 ; i < dist ; i++) {
     moveMotor(250, 20*r, r*125);
     moveMotor(20*r, 250, r*125);
   }
