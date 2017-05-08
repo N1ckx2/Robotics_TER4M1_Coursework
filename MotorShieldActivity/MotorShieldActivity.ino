@@ -10,7 +10,7 @@
 AF_DCMotor m2(1);
 AF_DCMotor m1(2);
 
-int diff = 25;
+double diff = 0.8;
 
 void moveMotor(int speed1, int speed2, int duration) {
   //motor speed to 0 to start
@@ -27,7 +27,7 @@ void moveMotor(int speed1, int speed2, int duration) {
 
   //moves the motor
   m1.setSpeed(speed1);
-  m2.setSpeed(speed2 <= 20 ? 0 : speed2-diff);
+  m2.setSpeed(speed2 <= 20 ? 0 : speed2*diff);
 
   delay(duration);
 
@@ -45,12 +45,12 @@ void setup() {
 void square (int side) { //trce a square
   for (int i = 0 ; i < 4 ; i++) { //four sides
     moveMotor(150, 150, side*250);
-    moveMotor(200, 0, 600);
+    moveMotor(200, 0, 800);
   }
 }
 
 void circle (int r) { //trace a circle
-  moveMotor(250, 20*r, r*600);
+  moveMotor(250, 20*r, r*1200);
 }
 
 void wave (int r, int dist) { //creates an oscillating wave with a striaght line disatnce of dist
@@ -62,9 +62,9 @@ void wave (int r, int dist) { //creates an oscillating wave with a striaght line
 
 void turn (int dist) {
   moveMotor(150, 150, dist*200);
-  moveMotor(200, 120, 1000);
-  moveMotor(-120, -200, 1000);
-  moveMotor(200, 120, 1000);
+  moveMotor(120, 200, 1200);
+  moveMotor(-250, -120, 1000);
+  moveMotor(120, 200, 1200);
   moveMotor(150, 150, dist*200);
 }
 
