@@ -46,8 +46,10 @@ void moveMotor(int speed1, int speed2, int duration) {
 
 
 void setup() {
-  // put your setup code here, to run once:
-
+    //allows motors to run
+  m1.run(RELEASE);
+  m2.run(RELEASE);
+  
 }
 
 void loop() {
