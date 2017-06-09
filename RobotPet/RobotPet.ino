@@ -4,6 +4,7 @@
  *  
  *  Summative Project - Robot Pet
  */
+ 
 #include <AFMotor.h> //for wheels
 #include <Servo.h> //to rotate sensor
 
@@ -18,8 +19,8 @@ Servo servo;
 int sensorPin = 9; //ultraosonic sensor pin
 int servoPin = 10;
 
+double diff = 0.8;
 
-double diff = 0.8
 void moveMotor(int speed1, int speed2, int duration) {
   //motor speed to 0 to start
   m1.setSpeed(0);
@@ -44,12 +45,30 @@ void moveMotor(int speed1, int speed2, int duration) {
   m2.run(RELEASE);
 }
 
+//calculates distance between robot and object in front of it in cm
+float distance(int pin)
+{
+  unsigned long time;
+  unsigned long sizeofpulse;
+  float range;
+
+  pinMode(pin, OUTPUT); //return digital pin to OUTPUT mode after reading
+  digitalWrite(pin, LOW);
+  delayMicroseconds(25);
+  digitalWrite(pin, HIGH); //Trig pin pulsed LOW for 25usec
+  time = micros(); //record timer
+  pinMode(pin, INPUT); //change pin to INPUT to read the echo pulse 
+  sizeofpulse = pulseIn(pin, LOW, 18000); //should be approx 150usec, timeout at 18msec
+  time = micros() - time - sizeofpulse; // amount of time elapsed since we sent the trigger pulse and detect the echo pulse, then subtract the size of the echo pulse
+  range = (time*340.29/2/10000)-3; // convert to distance in centimeters
+  return range;
+}
+
 
 void setup() {
-    //allows motors to run
+  //allows motors to run
   m1.run(RELEASE);
   m2.run(RELEASE);
-  
 }
 
 void loop() {
