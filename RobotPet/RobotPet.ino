@@ -64,6 +64,45 @@ float distance(int pin)
   return range;
 }
 
+//go straight while avoiding obstacles
+void moveStraight() {
+    // Determines the duration of the turn, depending on battery level and wheel this will be different
+  int lTurnTime = 775;
+  int rTurnTime = 680;
+  float dist = distance(sensorPin); //gets the distance of the obstacle in front
+  if (dist > 10) {//obstacle is a safe distance away
+    moveMotor(200, 200, 50);
+  } else { //obstacle is close
+    moveMotor(200, 0, rTurnTime);//90 degree right turn
+    servo.write(0); // Turn servo left
+    delay(500);
+    while (distance(sensorPin) < 30) { //keep moving sideways until you cross the object
+      moveMotor(200, 200, 50);
+      distTravelled++;
+    }
+    moveMotor(200,200,200); // Clear the box
+    moveMotor(0, 200, lTurnTime); //turn straight
+    delay(500);
+    while (distance(sensorPin) < 30) { //keep moving forward until you pass the object
+      moveMotor(200, 200, 50);
+    }
+    moveMotor(200,200,200); // Clear the box
+    moveMotor(0, 200, lTurnTime); //turn sideways again
+    delay(500);
+    for (int i = 0 ; i < distTravelled ; i++) {
+      moveMotor(200, 200, 50);
+    }
+    moveMotor(200,200,200); // Compensate for claering the box earlier
+    moveMotor(200, 0, rTurnTime);//90 degree right turn
+    servo.write(90); // Point sensor straight
+  }
+}
+
+
+//listens for loudest noise, returns how many degrees from forward it is
+int getDirection() {
+  return 0;
+}
 
 void setup() {
   //allows motors to run
@@ -73,5 +112,5 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int dist = distance(sensorPin);
+  
 }
