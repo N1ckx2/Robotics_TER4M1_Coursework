@@ -7,6 +7,7 @@
  
 #include <AFMotor.h> //for wheels
 #include <Servo.h> //to rotate sensor
+#include <stdlib.h> //for absolute value
 
 // Declare both motors for wheels
 AF_DCMotor m2(1);
@@ -16,10 +17,30 @@ AF_DCMotor m1(2);
 Servo servo;
 
 //Pins
-int sensorPin = 9; //ultraosonic sensor pin
 int servoPin = 10;
+int ultrasonicPin = 9;
+int listenPin1 = 2;
+int listenPin2 = 3;
+int touchPin1 = 4;
+int touchPin2 = 5;
 
+// Determines the duration of the turn, depending on battery level and wheel this will be different
 double diff = 0.8;
+int lTurnTime = 775;
+int rTurnTime = 680;
+
+void setup() {
+  //allows motors to run
+  m1.run(RELEASE);
+  m2.run(RELEASE);
+
+  //sensor pins
+  pinMode(ultrasonicPin, INPUT);
+  pinMode(listenPin1, INPUT);
+  pinMode(listenPin2, INPUT);
+  pinMode(touchPin1, INPUT);
+  pinMode(touchPin2, INPUT);
+}
 
 void moveMotor(int speed1, int speed2, int duration) {
   //motor speed to 0 to start
@@ -66,9 +87,6 @@ float distance(int pin)
 
 //go straight while avoiding obstacles
 void moveStraight() {
-    // Determines the duration of the turn, depending on battery level and wheel this will be different
-  int lTurnTime = 775;
-  int rTurnTime = 680;
   float dist = distance(sensorPin); //gets the distance of the obstacle in front
   if (dist > 10) {//obstacle is a safe distance away
     moveMotor(200, 200, 200);
@@ -101,27 +119,38 @@ void moveStraight() {
 
 //listens for loudest noise, turns towards that sound
 void findSound() {
+  float leftSound = 0;
+  float rightSound = 0;
   //sensor.getSound
   //sensor2.getSound
-  //which one is loud?
-  //turn in that direction
-  return 0;
+  moveMotor(100*rightSound/10, 100*leftSound/10, abs(rightSound - leftSound)*100); //modify equation based on experimental tests
+}
+
+//does a 3 point turn
+void turn (int dist) {
+  moveMotor(150, 150, dist*200);
+  moveMotor(120, 200, 1200);
+  moveMotor(-250, -120, 1000);
+  moveMotor(120, 200, 1200);
+  moveMotor(150, 150, dist*200);
 }
 
 //checks if the robot was touched, and responds appropriately
 void checkTouch() {
-  
+  if (digitalRead(touchSensor1) == HIGH) { //if the front is touched
+    moveMotor(-200, -200, 100);
+    playNote('c', 100);
+  }
+
+  if (digitalRead(touchSensor2) == HIGH) { //if rear is touched
+    turn(200);
+    playNote('c', 100);
+  }
 }
 
 //will check for tricks
 void checkTricks() {
   
-}
-
-void setup() {
-  //allows motors to run
-  m1.run(RELEASE);
-  m2.run(RELEASE);
 }
 
 void loop() {
