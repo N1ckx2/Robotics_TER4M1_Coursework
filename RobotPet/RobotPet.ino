@@ -1,4 +1,4 @@
-/*  Nicholas Vadivelu & Bingran Li
+ /*  Nicholas Vadivelu & Bingran Li
  *  TER4M1
  *  Mr. Jay
  *  
@@ -71,7 +71,7 @@ void moveStraight() {
   int rTurnTime = 680;
   float dist = distance(sensorPin); //gets the distance of the obstacle in front
   if (dist > 10) {//obstacle is a safe distance away
-    moveMotor(200, 200, 50);
+    moveMotor(200, 200, 200);
   } else { //obstacle is close
     moveMotor(200, 0, rTurnTime);//90 degree right turn
     servo.write(0); // Turn servo left
@@ -99,9 +99,23 @@ void moveStraight() {
 }
 
 
-//listens for loudest noise, returns how many degrees from forward it is
-int getDirection() {
+//listens for loudest noise, turns towards that sound
+void findSound() {
+  //sensor.getSound
+  //sensor2.getSound
+  //which one is loud?
+  //turn in that direction
   return 0;
+}
+
+//checks if the robot was touched, and responds appropriately
+void checkTouch() {
+  
+}
+
+//will check for tricks
+void checkTricks() {
+  
 }
 
 void setup() {
@@ -112,5 +126,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  findSound();
+  checkTouch();
+  checkTricks();
+  moveStraight();
 }
