@@ -33,6 +33,8 @@ void setup() {
   //allows motors to run
   m1.run(RELEASE);
   m2.run(RELEASE);
+  servo.attach(servoPin);
+  servo.write(90); // Point straight initially
 
   //sensor pins
   pinMode(ultrasonicPin, INPUT);
@@ -124,6 +126,25 @@ void findSound() {
   //sensor.getSound
   //sensor2.getSound
   moveMotor(100*rightSound/10, 100*leftSound/10, abs(rightSound - leftSound)*100); //modify equation based on experimental tests
+}
+
+//Various Tricks below
+void square (int side) { //trce a square
+  for (int i = 0 ; i < 4 ; i++) { //four sides
+    moveMotor(150, 150, side*250);
+    moveMotor(200, 0, 800);
+  }
+}
+
+void circle (int r) { //trace a circle
+  moveMotor(250, 20*r, r*1200);
+}
+
+void wave (int r, int dist) { //creates an oscillating wave with a striaght line disatnce of dist
+  for (int i = 0 ; i < dist ; i++) {
+    moveMotor(250, 20*r, r*125);
+    moveMotor(20*r, 250, r*125);
+  }
 }
 
 //does a 3 point turn
