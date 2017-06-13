@@ -36,7 +36,7 @@ void setup() {
   servo.attach(servoPin);
   servo.write(90); // Point straight initially
 
-  //sensor pins
+  //set up the sensor pins
   pinMode(ultrasonicPin, INPUT);
   pinMode(listenPin1, INPUT);
   pinMode(listenPin2, INPUT);
@@ -44,6 +44,7 @@ void setup() {
   pinMode(touchPin2, INPUT);
 }
 
+//function made to easily control the movement of the robot
 void moveMotor(int speed1, int speed2, int duration) {
   //motor speed to 0 to start
   m1.setSpeed(0);
@@ -88,21 +89,22 @@ float distance(int pin) {
 
 //go straight while avoiding obstacles
 void moveStraight() {
-  float dist = distance(sensorPin); //gets the distance of the obstacle in front
+  float dist = distance(ultrasonicPin); //gets the distance of the obstacle in front
+  int distTravelled = 0;
   if (dist > 10) {//obstacle is a safe distance away
     moveMotor(200, 200, 200);
   } else { //obstacle is close
     moveMotor(200, 0, rTurnTime);//90 degree right turn
     servo.write(0); // Turn servo left
     delay(500);
-    while (distance(sensorPin) < 30) { //keep moving sideways until you cross the object
+    while (distance(ultrasonicPin) < 30) { //keep moving sideways until you cross the object
       moveMotor(200, 200, 50);
       distTravelled++;
     }
     moveMotor(200,200,200); // Clear the box
     moveMotor(0, 200, lTurnTime); //turn straight
     delay(500);
-    while (distance(sensorPin) < 30) { //keep moving forward until you pass the object
+    while (distance(ultrasonicPin) < 30) { //keep moving forward until you pass the object
       moveMotor(200, 200, 50);
     }
     moveMotor(200,200,200); // Clear the box
@@ -125,7 +127,7 @@ void findSound() {
   moveMotor(100*rightSound/10, 100*leftSound/10, abs(rightSound - leftSound)*100); //modify equation based on experimental tests
 }
 
-//Various Tricks below
+//Various tricks are implemented below
 void square (int side) { //trce a square
   for (int i = 0 ; i < 4 ; i++) { //four sides
     moveMotor(150, 150, side*250);
@@ -144,25 +146,25 @@ void wave (int r, int dist) { //creates an oscillating wave with a striaght line
   }
 }
 
-//does a 3 point turn
+//does a 3-point turn for the robot to react to a touch
 void turn (int dist) {
-  moveMotor(150, 150, dist*200);
-  moveMotor(120, 200, 1200);
-  moveMotor(-250, -120, 1000);
-  moveMotor(120, 200, 1200);
-  moveMotor(150, 150, dist*200);
+  moveMotor(150, 150, dist*200); //moving forward
+  moveMotor(120, 200, 1200); //first point of turn 
+  moveMotor(-250, -120, 1000); //second point of turn
+  moveMotor(120, 200, 1200); //final point of turn
+  //moveMotor(150, 150, dist*200); //moving back
 }
 
 //checks if the robot was touched, and responds appropriately
 void checkTouch() {
-  if (digitalRead(touchSensor1) == HIGH) { //if the front is touched
-    moveMotor(-200, -200, 100);
-    playNote('c', 100);
+  if (digitalRead(touchPin1) == HIGH) { //if the front is touched
+    moveMotor(-200, -200, 100); //moves away from sound
+    playNote('c', 100); //"growls"
   }
 
-  if (digitalRead(touchSensor2) == HIGH) { //if rear is touched
-    turn(200);
-    playNote('c', 100);
+  if (digitalRead(touchPin2) == HIGH) { //if rear is touched
+    turn(200); //moves away from sound, turns
+    playNote('c', 100); //growls"
   }
 }
 
@@ -183,9 +185,8 @@ void checkTricks() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  findSound();
-  checkTouch();
-  checkTricks();
-  moveStraight();
+  checkTouch(); //checks if the robot was touched
+  checkTricks(); //check if a trick command was triggered
+  findSound(); //figures out which way to turn
+  moveStraight(); //moves towards the loud sound source
 }
