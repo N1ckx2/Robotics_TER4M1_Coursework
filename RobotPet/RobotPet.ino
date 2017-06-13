@@ -69,8 +69,7 @@ void moveMotor(int speed1, int speed2, int duration) {
 }
 
 //calculates distance between robot and object in front of it in cm
-float distance(int pin)
-{
+float distance(int pin) {
   unsigned long time;
   unsigned long sizeofpulse;
   float range;
@@ -121,10 +120,8 @@ void moveStraight() {
 
 //listens for loudest noise, turns towards that sound
 void findSound() {
-  float leftSound = 0;
-  float rightSound = 0;
-  //sensor.getSound
-  //sensor2.getSound
+  int leftSound = analogRead(listenPin1);
+  int rightSound = analogRead(listenPin2);
   moveMotor(100*rightSound/10, 100*leftSound/10, abs(rightSound - leftSound)*100); //modify equation based on experimental tests
 }
 
@@ -171,7 +168,18 @@ void checkTouch() {
 
 //will check for tricks
 void checkTricks() {
-  
+  int x = 0;
+  while (x++ < 50) { //will check for tricks for a short period of time
+    if (analogRead(listenPin1) >= 250) //if there is a loud noise, the robot will do one of three tricks
+      if (x%3 == 0) 
+        square(10);
+      else if (x%3 == 1)
+        wave(10);
+      else 
+        circle(10);
+    }
+    delay(10);
+  }
 }
 
 void loop() {
