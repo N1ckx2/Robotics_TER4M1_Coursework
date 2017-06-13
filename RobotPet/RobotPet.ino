@@ -23,6 +23,7 @@ int listenPin1 = 2;
 int listenPin2 = 3;
 int touchPin1 = 4;
 int touchPin2 = 5;
+int speakerPin = 7;
 
 // Determines the duration of the turn, depending on battery level and wheel this will be different
 double diff = 0.8;
@@ -42,6 +43,7 @@ void setup() {
   pinMode(listenPin2, INPUT);
   pinMode(touchPin1, INPUT);
   pinMode(touchPin2, INPUT);
+  pinMode(speakerPin, OUTPUT);
 }
 
 //function made to easily control the movement of the robot
@@ -155,6 +157,27 @@ void turn (int dist) {
   //moveMotor(150, 150, dist*200); //moving back
 }
 
+void playTone(int tone, int duration) { //plays a tone
+  for (long i = 0; i < duration * 1000L; i += tone * 2) {
+    digitalWrite(speakerPin, HIGH);
+    delayMicroseconds(tone);
+    digitalWrite(speakerPin, LOW);
+    delayMicroseconds(tone);
+  }
+}
+
+void playNote(char note, int duration) { //plays notes
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+  
+  // play the tone corresponding to the note name
+  for (int i = 0; i < 8; i++) {
+    if (names[i] == note) {
+      playTone(tones[i], duration);
+    }
+  }
+}
+
 //checks if the robot was touched, and responds appropriately
 void checkTouch() {
   if (digitalRead(touchPin1) == HIGH) { //if the front is touched
@@ -172,13 +195,14 @@ void checkTouch() {
 void checkTricks() {
   int x = 0;
   while (x++ < 50) { //will check for tricks for a short period of time
-    if (analogRead(listenPin1) >= 250) //if there is a loud noise, the robot will do one of three tricks
+    if (analogRead(listenPin1) >= 250) { //if there is a loud noise, the robot will do one of three tricks
       if (x%3 == 0) 
         square(10);
       else if (x%3 == 1)
-        wave(10);
+        wave(3, 3);
       else 
         circle(10);
+      playNote('d', 100);
     }
     delay(10);
   }
