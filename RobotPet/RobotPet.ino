@@ -19,10 +19,10 @@ Servo servo;
 //Pins
 int servoPin = 10;
 int ultrasonicPin = 9;
-int listenPin1 = 2;
-int listenPin2 = 3;
+int listenPin1 = 3;
+int listenPin2 = 5;
 int touchPin1 = 4;
-int touchPin2 = 5;
+int touchPin2 = 6;
 int speakerPin = 7;
 
 // Determines the duration of the turn, depending on battery level and wheel this will be different
@@ -120,7 +120,6 @@ void moveStraight() {
     servo.write(90); // Point sensor straight
   }
 }
-
 
 //listens for loudest noise, turns towards that sound
 void findSound() {
